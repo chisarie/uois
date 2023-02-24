@@ -2,10 +2,10 @@ import json
 import pathlib
 import numpy as np
 import matplotlib.pyplot as plt
-import src.util.utilities as util_
-import src.evaluation as evaluation
-import src.segmentation as segmentation
-import src.data_augmentation as data_augmentation
+import uois.util.utilities as util_
+import uois.evaluation as evaluation
+import uois.segmentation as segmentation
+import uois.data_augmentation as data_augmentation
 
 DSN_CONFIG = {
     # Sizes
@@ -43,7 +43,7 @@ UOIS3D_CONFIG = {
 
 class UOISInference:
     def __init__(self):
-        checkpoint_dir = pathlib.Path(__file__).parent.resolve() / "checkpoints"
+        checkpoint_dir = pathlib.Path(__file__).parents[1].resolve() / "checkpoints"
         dsn_filename = str(checkpoint_dir / "DepthSeedingNetwork_3D_TOD_checkpoint.pth")
         rrn_filename = str(checkpoint_dir / "RRN_OID_checkpoint.pth")
         UOIS3D_CONFIG["final_close_morphology"] = "TableTop_v5" in rrn_filename
@@ -128,7 +128,7 @@ if __name__ == "__main__":
     img_num = 0  # 0-3
 
     # Load Data
-    example_images_dir = pathlib.Path(__file__).parent.resolve() / "example_images"
+    example_images_dir = pathlib.Path(__file__).parents[1].resolve() / "example_images"
     images_path = sorted(example_images_dir.iterdir())
     img_file = images_path[img_num]
     data = np.load(img_file, allow_pickle=True, encoding="bytes").item()
