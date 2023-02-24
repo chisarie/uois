@@ -52,25 +52,31 @@ class UOISInference:
         )
         return
 
-    def predict_from_depth(self, rgb, depth, camera_params):
+    def predict_from_depth(self, rgb, depth, depth_K):
         """
         Args:
-            rgb: (H, W, 3) uint8 image
-            depth: (H, W) float32 depth image (in meters)
-            camera_params: a dictionary with parameters of the camera used
+            rgb: (H, W, 3) np.uint8 image
+            depth: (H, W) np.float32 depth image (in meters)
+            depth_K: (3, 3) np.float64 camera intrinsics
         Returns:
             seg_mask: (H, W) int64 segmentation mask
         """
+        camera_params = {
+            "fx": depth_K[0, 0],
+            "fy": depth_K[1, 1],
+            "x_offset": depth_K[0, 2],
+            "y_offset": depth_K[1, 2],
+        }
         xyz = util_.compute_xyz(depth, camera_params)
         return self.predict(rgb, xyz)
 
     def predict(self, rgb, xyz):
         """
         Args:
-            rgb: (H, W, 3) uint8 image
-            xyz: (H, W, 3) float32 xyz image (in meters)
+            rgb: (H, W, 3) np.uint8 image
+            xyz: (H, W, 3) np.float32 xyz image (in meters)
         Returns:
-            seg_mask: (H, W) int64 segmentation mask
+            seg_mask: (H, W) np.int64 segmentation mask
         """
         if len(rgb.shape) == 3:
             rgb = np.expand_dims(rgb, 0)
@@ -88,10 +94,10 @@ class UOISInference:
     def visualize(self, rgb, xyz, seg_mask, seg_mask_gt=None):
         """
         Args:
-            rgb: (H, W, 3) uint8 image
-            xyz: (H, W, 3) float32 xyz image (in meters)
-            seg_mask: (H, W) int64 segmentation mask
-            seg_mask_gt: (H, W) int64 ground truth segmentation mask
+            rgb: (H, W, 3) np.uint8 image
+            xyz: (H, W, 3) np.float32 xyz image (in meters)
+            seg_mask: (H, W) np.int64 segmentation mask
+            seg_mask_gt: (H, W) np.int64 ground truth segmentation mask
         """
         num_objs = np.unique(seg_mask).max() + 1
         seg_mask_plot = util_.get_color_mask(seg_mask, nc=num_objs)
