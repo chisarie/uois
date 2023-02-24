@@ -66,6 +66,8 @@ class UOISInference:
             "fy": depth_K[1, 1],
             "x_offset": depth_K[0, 2],
             "y_offset": depth_K[1, 2],
+            "img_height": depth.shape[0],
+            "img_width": depth.shape[1],
         }
         xyz = util_.compute_xyz(depth, camera_params)
         return self.predict_from_xyz(rgb, xyz)
