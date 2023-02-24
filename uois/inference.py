@@ -52,7 +52,7 @@ class UOISInference:
         )
         return
 
-    def predict_from_depth(self, rgb, depth, depth_K):
+    def predict(self, rgb, depth, depth_K):
         """
         Args:
             rgb: (H, W, 3) np.uint8 image
@@ -68,9 +68,9 @@ class UOISInference:
             "y_offset": depth_K[1, 2],
         }
         xyz = util_.compute_xyz(depth, camera_params)
-        return self.predict(rgb, xyz)
+        return self.predict_from_xyz(rgb, xyz)
 
-    def predict(self, rgb, xyz):
+    def predict_from_xyz(self, rgb, xyz):
         """
         Args:
             rgb: (H, W, 3) np.uint8 image
@@ -138,5 +138,5 @@ if __name__ == "__main__":
 
     # Inference
     uois_inference = UOISInference()
-    segm = uois_inference.predict(rgb, xyz)
+    segm = uois_inference.predict_from_xyz(rgb, xyz)
     uois_inference.visualize(rgb, xyz, segm, segm_gt)
