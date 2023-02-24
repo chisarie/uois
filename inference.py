@@ -52,6 +52,18 @@ class UOISInference:
         )
         return
 
+    def predict_from_depth(self, rgb, depth, camera_params):
+        """
+        Args:
+            rgb: (H, W, 3) uint8 image
+            depth: (H, W) float32 depth image (in meters)
+            camera_params: a dictionary with parameters of the camera used
+        Returns:
+            seg_mask: (H, W) int64 segmentation mask
+        """
+        xyz = util_.compute_xyz(depth, camera_params)
+        return self.predict(rgb, xyz)
+
     def predict(self, rgb, xyz):
         """
         Args:
@@ -107,7 +119,7 @@ class UOISInference:
 
 
 if __name__ == "__main__":
-    img_num = 3  # 0-3
+    img_num = 0  # 0-3
 
     # Load Data
     example_images_dir = pathlib.Path(__file__).parent.resolve() / "example_images"
